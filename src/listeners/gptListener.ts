@@ -38,38 +38,23 @@ export class MessageMentionListener extends Listener {
       if (repliedMessage) {
         const isBotMessage = repliedMessage.author.id === bot.id;
 
-        if (isBotMessage) {
-          inputBlocks.push({
-            role: "assistant",
-            content: [
-              {
-                type: "output_text",
-                text: repliedMessage.content,
-                annotations: [],
-              },
-            ],
-          });
-        } else {
-          inputBlocks.push({
-            role: "user",
-            content: [
-              {
-                type: "input_text",
-                text: `
-               ${repliedMessage.content}`,
-              },
-            ],
-          });
-        }
+        inputBlocks.push({
+          role: isBotMessage ? "assistant" : "user",
+          content: [
+            {
+              type: isBotMessage ? "output_text" : "input_text",
+              text: repliedMessage.content,
+            },
+          ],
+        });
       }
     }
-
     inputBlocks.push({
       role: "user",
       content: [
         {
           type: "input_text",
-          text: ` ${message.content.replace(`<@${bot.id}>`, "").trim()}`,
+          text: `${message.content.replace(`<@${bot.id}>`, "").trim()}`,
         },
       ],
     });
