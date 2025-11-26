@@ -71,3 +71,4 @@ export class MessageMentionListener extends Listener {
     await message.reply(response.output_text || "Viga AI vastuses.");
   }
 }
+//test
