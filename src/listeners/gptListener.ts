@@ -1,6 +1,10 @@
 import { Listener } from "@sapphire/framework";
 import { TextChannel, type Message } from "discord.js";
 import { openaiClient } from "../index.js";
+import type {
+  ResponseInput,
+  ResponseInputItem,
+} from "openai/resources/responses/responses.js";
 
 export class MessageMentionListener extends Listener {
   public constructor(
@@ -28,7 +32,7 @@ export class MessageMentionListener extends Listener {
       }
     }, 8000);
 
-    const inputBlocks: any[] = [];
+    const inputBlocks: ResponseInput = [];
 
     if (referenceId) {
       const repliedMessage = await message.channel.messages
@@ -40,12 +44,7 @@ export class MessageMentionListener extends Listener {
 
         inputBlocks.push({
           role: isBotMessage ? "assistant" : "user",
-          content: [
-            {
-              type: isBotMessage ? "output_text" : "input_text",
-              text: repliedMessage.content,
-            },
-          ],
+          content: repliedMessage.content,
         });
       }
     }
@@ -54,7 +53,7 @@ export class MessageMentionListener extends Listener {
       content: [
         {
           type: "input_text",
-          text: `${message.content.replace(`<@${bot.id}>`, "").trim()}`,
+          text: `${message.cleanContent.replace(`<@${bot.id}>`, "").trim()}`,
         },
       ],
     });
@@ -63,7 +62,10 @@ export class MessageMentionListener extends Listener {
     const response = await openaiClient.responses.create({
       model: "gpt-5-nano",
       input: inputBlocks,
-      instructions: "Vasta lühidalt",
+      reasoning: { effort: "minimal" },
+      text: { verbosity: "low" },
+      instructions:
+        "Vasta lühidalt, ole veits grumpy ja vasta nagu vastu tahtmist, ära paku ise mitte midagi",
     });
     clearInterval(typingLoop);
     await message.reply(response.output_text || "Viga AI vastuses.");
