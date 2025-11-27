@@ -1,7 +1,7 @@
 {
-  "name": "artbot",
+  "name": "openai-discord-bot",
   "version": "1.0.0",
-  "description": "Bot for art server in discord",
+  "description": "Discord Server Bot with OpenAI Integration",
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
