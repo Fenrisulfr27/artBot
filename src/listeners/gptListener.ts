@@ -3,7 +3,6 @@ import { TextChannel, type Message } from "discord.js";
 import { openaiClient } from "../index.js";
 import type {
   ResponseInput,
-  ResponseInputItem,
 } from "openai/resources/responses/responses.js";
 
 export class MessageMentionListener extends Listener {
@@ -57,8 +56,6 @@ export class MessageMentionListener extends Listener {
         },
       ],
     });
-
-    console.log("SISEND OPENAI-LE:", JSON.stringify(inputBlocks, null, 2));
     const response = await openaiClient.responses.create({
       model: "gpt-4.1",
       input: inputBlocks,
@@ -68,4 +65,3 @@ export class MessageMentionListener extends Listener {
     await message.reply(response.output_text || "Viga AI vastuses.");
   }
 }
-//test
