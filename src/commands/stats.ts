@@ -32,7 +32,7 @@ export class StatsCommand extends Command {
       string,
       { displayName: string; messages: number; words: number }
     > = JSON.parse(content);
-
+    const totalWords = Object.values(data).reduce((acc, u) => acc + u.words, 0);
     const leaderboard = Object.values(data).sort((a, b) => b.words - a.words);
     const topList = leaderboard
       .map((u, i) => `${i + 1}. **${u.displayName}** - ${u.words} sõna`)
@@ -41,7 +41,8 @@ export class StatsCommand extends Command {
     const embed = new EmbedBuilder()
       .setTitle("Top 10")
       .setDescription(topList)
-      .setColor("#db759c");
+      .setColor("#db759c")
+      .setFooter({ text: `Kirjutatud sõnu kokku: ${totalWords}` });
 
     await interaction.editReply({ embeds: [embed] });
   }
