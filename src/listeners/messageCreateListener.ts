@@ -20,7 +20,6 @@ export class MessageCreateListener extends Listener {
       { displayName: string; messages: number; words: number }
     > = {};
 
-    // --- LOEME FAILI JA TEEME MIGRATSIOONI ---
     if (existsSync(filePath)) {
       const content = readFileSync(filePath, "utf8");
 
@@ -35,9 +34,9 @@ export class MessageCreateListener extends Listener {
       }
 
       data = rawData;
+      console.log(data);
     }
 
-    // --- UUTE ANDMETE LISAMINE / UUENDAMINE ---
     const authorId = message.author.id;
     const wordsCount = message.content
       .trim()
@@ -57,7 +56,6 @@ export class MessageCreateListener extends Listener {
       data[authorId].words += wordsCount;
     }
 
-    // --- SALVESTAMINE ---
     writeFileSync(filePath, JSON.stringify(data, null, 2));
 
     console.log(
