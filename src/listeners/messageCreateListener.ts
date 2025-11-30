@@ -19,22 +19,9 @@ export class MessageCreateListener extends Listener {
       string,
       { displayName: string; messages: number; words: number }
     > = {};
-
     if (existsSync(filePath)) {
       const content = readFileSync(filePath, "utf8");
-
-      const rawData = JSON.parse(content) as Record<string, any>;
-
-      // Rename messagesCount -> messages
-      for (const userId of Object.keys(rawData)) {
-        if (rawData[userId].messagesCount !== undefined) {
-          rawData[userId].messages = rawData[userId].messagesCount;
-          delete rawData[userId].messagesCount;
-        }
-      }
-
-      data = rawData;
-      console.log(data);
+      data = JSON.parse(content);
     }
 
     const authorId = message.author.id;
@@ -57,7 +44,6 @@ export class MessageCreateListener extends Listener {
     }
 
     writeFileSync(filePath, JSON.stringify(data, null, 2));
-
     console.log(
       `Salvestatud sõnum: ${data[authorId].displayName} - ${data[authorId].messages} sõnumit kokku`
     );
