@@ -19,16 +19,30 @@ export class MessageCreateListener extends Listener {
       string,
       { displayName: string; messages: number; words: number }
     > = {};
+
+    // --- LOEME FAILI JA TEEME MIGRATSIOONI ---
     if (existsSync(filePath)) {
       const content = readFileSync(filePath, "utf8");
-      data = JSON.parse(content);
+
+      const rawData = JSON.parse(content) as Record<string, any>;
+
+      // Rename messagesCount -> messages
+      for (const userId of Object.keys(rawData)) {
+        if (rawData[userId].messagesCount !== undefined) {
+          rawData[userId].messages = rawData[userId].messagesCount;
+          delete rawData[userId].messagesCount;
+        }
+      }
+
+      data = rawData;
     }
 
+    // --- UUTE ANDMETE LISAMINE / UUENDAMINE ---
     const authorId = message.author.id;
     const wordsCount = message.content
       .trim()
-      .split(/\s+/) // jagab sõnad tühikute, tabide, reavahetuste järgi
-      .filter(Boolean).length; // eemaldab tühjad kohad
+      .split(/\s+/)
+      .filter(Boolean).length;
 
     if (!data[authorId]) {
       data[authorId] = {
@@ -43,7 +57,9 @@ export class MessageCreateListener extends Listener {
       data[authorId].words += wordsCount;
     }
 
+    // --- SALVESTAMINE ---
     writeFileSync(filePath, JSON.stringify(data, null, 2));
+
     console.log(
       `Salvestatud sõnum: ${data[authorId].displayName} - ${data[authorId].messages} sõnumit kokku`
     );
