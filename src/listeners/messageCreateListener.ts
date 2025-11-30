@@ -17,7 +17,7 @@ export class MessageCreateListener extends Listener {
 
     let data: Record<
       string,
-      { displayName: string; messagesCount: number; words: number }
+      { displayName: string; messages: number; words: number }
     > = {};
     if (existsSync(filePath)) {
       const content = readFileSync(filePath, "utf8");
@@ -33,11 +33,11 @@ export class MessageCreateListener extends Listener {
     if (!data[authorId]) {
       data[authorId] = {
         displayName: message.member?.displayName || message.author.username,
-        messagesCount: 1,
+        messages: 1,
         words: wordsCount,
       };
     } else {
-      data[authorId].messagesCount++;
+      data[authorId].messages++;
       data[authorId].displayName =
         message.member?.displayName || message.author.username;
       data[authorId].words += wordsCount;
@@ -45,7 +45,7 @@ export class MessageCreateListener extends Listener {
 
     writeFileSync(filePath, JSON.stringify(data, null, 2));
     console.log(
-      `Salvestatud sõnum: ${data[authorId].displayName} - ${data[authorId].messagesCount} sõnumit kokku`
+      `Salvestatud sõnum: ${data[authorId].displayName} - ${data[authorId].messages} sõnumit kokku`
     );
   }
 }

@@ -30,7 +30,7 @@ export class StatsCommand extends Command {
     const content = readFileSync(filePath, "utf8");
     const data: Record<
       string,
-      { displayName: string; messagesCount: number; words: number }
+      { displayName: string; messages: number; words: number }
     > = JSON.parse(content);
 
     const leaderboard = Object.values(data).sort((a, b) => b.words - a.words);
